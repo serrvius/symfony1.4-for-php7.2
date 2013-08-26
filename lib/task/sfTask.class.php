@@ -304,7 +304,15 @@ abstract class sfTask
    */
   public function getDetailedDescription()
   {
-    return preg_replace('/\[(.+?)\|(\w+)\]/se', '$this->formatter->format("$1", "$2")', $this->detailedDescription);
+    $self = $this;
+
+    return preg_replace_callback(
+      '/\[(.+?)\|(\w+)\]/s',
+      function ($matches) use ($self) {
+        return $self->formatter->format($matches[1], $matches[2]);
+      },
+      $this->detailedDescription
+    );
   }
 
   /**
