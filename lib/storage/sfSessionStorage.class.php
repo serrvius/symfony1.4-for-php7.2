@@ -66,23 +66,23 @@ class sfSessionStorage extends sfStorage
     // initialize parent
     parent::initialize($options);
 
-    // set session name
-    $sessionName = $this->options['session_name'];
+    if (session_status() !== PHP_SESSION_ACTIVE) {
+        // set session name
+        $sessionName = $this->options['session_name'];
 
-    session_name($sessionName);
+        session_name($sessionName);
 
-    if (!(boolean) ini_get('session.use_cookies') && $sessionId = $this->options['session_id'])
-    {
-      session_id($sessionId);
+        if (!(boolean)ini_get('session.use_cookies') && $sessionId = $this->options['session_id']) {
+            session_id($sessionId);
+        }
+
+        $lifetime = $this->options['session_cookie_lifetime'];
+        $path = $this->options['session_cookie_path'];
+        $domain = $this->options['session_cookie_domain'];
+        $secure = $this->options['session_cookie_secure'];
+        $httpOnly = $this->options['session_cookie_httponly'];
+        session_set_cookie_params($lifetime, $path, $domain, $secure, $httpOnly);
     }
-
-    $lifetime = $this->options['session_cookie_lifetime'];
-    $path     = $this->options['session_cookie_path'];
-    $domain   = $this->options['session_cookie_domain'];
-    $secure   = $this->options['session_cookie_secure'];
-    $httpOnly = $this->options['session_cookie_httponly'];
-    session_set_cookie_params($lifetime, $path, $domain, $secure, $httpOnly);
-
     if (null !== $this->options['session_cache_limiter'])
     {
       session_cache_limiter($this->options['session_cache_limiter']);
